@@ -6,6 +6,8 @@
 
 ---
 
+[block design](./block_design.jpeg)
+
 ## 1. Methodology
 The primary objective of this project was to implement a real-time, edge-AI face mask detection system by balancing convolutional neural network (CNN) accuracy with the strict resource constraints of an embedded System-on-Chip (SoC). 
 
