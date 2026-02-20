@@ -1,5 +1,4 @@
-# cnn-accelerator-bharat-ai-soc
-# Final Project Report
+# Project Report
 
 **Project Title:** Custom CNN Model for Mask Detection with Hardware Acceleration  
 **Institution:** Tezpur University  
