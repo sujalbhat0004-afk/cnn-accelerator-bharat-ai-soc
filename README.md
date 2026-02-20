@@ -8,6 +8,8 @@
 
 ![block_design](./block_design.jpeg)
 
+Demo Link : [here](https://drive.google.com/file/d/13moP2f3kCbjELr_51sMtAtKYN_kvNh7c/view?usp=drivesdk)
+
 ## 1. Hardware and Software Components
 To develop, synthesize, and deploy this project, we utilized a specific hardware and software stack:
 
