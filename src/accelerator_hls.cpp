@@ -1,4 +1,4 @@
-#include "myproject.h"
+#include "accelerator_hls.h"
 #include <cmath>
 
 #include "w1.h"
