@@ -6,9 +6,28 @@
 
 ---
 
-![block design](./block_design.jpeg)
+![block_design](./block_design.jpeg)
 
-## 1. Methodology
+## 1. Hardware and Software Components
+To develop, synthesize, and deploy this project, we utilized a specific hardware and software stack:
+
+
+
+**Hardware Setup:**
+* **Development Board:** Xilinx Zynq-7000 SoC (ZedBoard)
+* **Video Input:** Logitech 720p USB Web Camera
+* **Connectivity:** Ethernet Cable (for local network routing)
+
+**Software & Toolchain:**
+* **Operating System:** PYNQ OS v2.4 (Embedded Linux)
+* **OS Control & Execution:** Jupyter Notebook (Python interface for DMA control and OpenCV)
+* **Serial Communication:** PuTTY (for terminal access and debugging)
+* **High-Level Synthesis:** Xilinx Vitis HLS (Synthesized the C++ CNN into RTL IP)
+* **Hardware Integration:** Xilinx Vivado (Block design, AXI-routing, and bitstream generation)
+
+---
+
+## 2. Methodology
 The primary objective of this project was to implement a real-time, edge-AI face mask detection system by balancing convolutional neural network (CNN) accuracy with the strict resource constraints of an embedded System-on-Chip (SoC). 
 
 We employed a **Hardware/Software Co-design Strategy**:
@@ -23,10 +42,8 @@ A custom, lightweight 3-layer CNN was developed to distinguish mask fabric from 
 
 ---
 
-## 2. Hardware Utilization
+## 3. Hardware Utilization
 The CNN algorithm was synthesized into Register-Transfer Level (RTL) hardware using Xilinx Vitis HLS. The implementation is highly optimized, maximizing the logic capabilities of the Zynq-7020 chip without exceeding its limits.
-
-
 
 **Vivado HLS Resource Estimates:**
 
@@ -39,8 +56,10 @@ The CNN algorithm was synthesized into Register-Transfer Level (RTL) hardware us
 
 ---
 
-## 3. Optimization Techniques
+## 4. Optimization Techniques
 To transition from a software-bound bottleneck to real-time hardware execution, several critical optimization techniques were applied:
+
+
 
 * **Fixed-Point Quantization (`ap_fixed<16, 8>`):** Floating-point arithmetic was completely eliminated in the PL. All model weights and activations were quantized to 16-bit fixed-point integers. By allocating 8 bits to the fractional component, the system maps raw 8-bit image pixels (0-255) directly into hardware without requiring expensive floating-point normalization on the CPU.
 * **Direct Memory Access (DMA) Handshaking:** A race condition between the AXI-DMA and the AI IP was eliminated using explicit software-to-hardware handshaking. Auto-restart was disabled, and the IP execution (`0x01`) is triggered only after the memory buffers are primed.
@@ -49,20 +68,18 @@ To transition from a software-bound bottleneck to real-time hardware execution, 
 
 ---
 
-## 4. Results and Performance Metrics
+## 5. Results and Performance Metrics
 The hardware acceleration provided a massive improvement in system throughput and inference latency, proving the viability of the Zynq-7000 for edge-AI applications.
-
-
 
 **Speed & Throughput:**
 * **CPU Inference Latency:** ~380ms to 450ms
 * **FPGA Inference Latency:** ~26.0ms (Practical measured) / 39.5ms (Theoretical max)
 * **Speedup Factor:** **~15x reduction** in inference time, stabilizing the video feed from 2.2 FPS up to 15.0 FPS.
 
-**Accuracy Trade-off:**
+**Accuracy Trade-off & Analysis:**
 * **CPU Baseline Accuracy (Float32):** ~85%
 * **FPGA Accelerator Accuracy (Int16):** ~70% - 80%
-* **Analysis:** A slight drop in classification accuracy was observed. This is a known and acceptable trade-off in embedded engineering caused by the quantization from 32-bit floating-point precision to 16-bit fixed-point precision. Despite this, the system remains highly capable of real-time binary classification.
+* **Analysis:** A noticeable drop in classification accuracy was observed. Due to the strict resource limitations of the ZedBoard (specifically the available DSP slices and BRAM) and it being the only compatible board we had access to, we could not implement a deeper, more mathematically complex CNN model (such as ResNet or MobileNet). Consequently, we had to heavily compress our custom architecture and rely on 16-bit fixed-point quantization. This resulted in a deliberate but necessary compromise in raw accuracy to successfully achieve real-time (15 FPS) hardware-accelerated performance on this specific embedded platform.
 
 **Conclusion:**
-By successfully migrating the convolutional workload from the ARM PS to the FPGA PL, the project achieved a 15x acceleration in mathematical execution. The resulting system is a robust, real-time edge device capable of effective mask detection.
+By successfully migrating the convolutional workload from the ARM PS to the FPGA PL, the project achieved a 15x acceleration in mathematical execution. Navigating the strict hardware constraints required strategic model compression and memory handling, ultimately resulting in a robust, real-time edge device capable of effective mask detection.
